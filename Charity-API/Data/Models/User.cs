@@ -10,8 +10,12 @@ namespace Charity_API.Data.Models
         public int? RoleId { get; set; }
         public Roles Role { get; set; }
         public string? Image { get; set; }
+        public string City { get; set; }
+        public string Address { get; set; }
+        public DateTime Birthday { get; set; }
         public bool Approved { get; set; }
         public bool? Status { get; set; }
+
         public List<User_Category> Categories { get; set; }
         public List<User_Donator_Note> DonatorsNotes { get; set; }
         public List<User_Donator_Note> UsersNotes { get; set; }
