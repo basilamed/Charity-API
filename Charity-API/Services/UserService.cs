@@ -226,6 +226,16 @@ namespace Charity_API.Services
             var list = context.Users.Where(x => x.RoleId == 2).ToList();
             return list;
         }
+        public async Task<List<User>> GetApproved()
+        {
+            var list = context.Users.Where(x => x.Approved == true).ToList();
+            return list;
+        }
+        public async Task<List<User>> GetPending()
+        {
+            var list = context.Users.Where(x => x.Approved == false).ToList();
+            return list;
+        }
 
 
         public async Task<bool> ChangePassword(string userId, ChangePasswordDto user)

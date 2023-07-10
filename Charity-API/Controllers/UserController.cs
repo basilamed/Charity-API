@@ -101,6 +101,32 @@ namespace Charity_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("get-all-approved")]
+        public async Task<IActionResult> GetApproved()
+        {
+            try
+            {
+                var res = await userService.GetApproved();
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("get-all-pending")]
+        public async Task<IActionResult> GetPending()
+        {
+            try
+            {
+                var res = await userService.GetPending();
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("get-all-benefitiaries")]
         public async Task<IActionResult> GetBenefitiaries()
         {
