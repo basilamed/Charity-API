@@ -10,9 +10,9 @@ namespace Charity_API.Controllers
     {
         private readonly CategoryService categoryService;
         public 
-            CategoryController(CategoryService decorService)
+            CategoryController(CategoryService categoryService)
         {
-            this.categoryService = decorService;
+            this.categoryService = categoryService;
         }
 
         [HttpGet("all-categories")]

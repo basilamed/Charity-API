@@ -54,6 +54,8 @@ namespace Charity_API.Data
                 .WithMany(u => u.Users)
                 .HasForeignKey(u => u.RoleId);
 
+           
+
         }
         public DbSet<Roles> Roles { get; set; }
         public DbSet<User> User { get; set; }
