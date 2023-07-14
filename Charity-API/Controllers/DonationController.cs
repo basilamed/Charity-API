@@ -53,6 +53,19 @@ namespace Charity_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("donation-by-category-id/{id}")]
+        public async Task<IActionResult> GetDonationByCategoryId(int id)
+        {
+            try
+            {
+                var list = await donationService.GetDonationsByCategoryId(id);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPost("add-donation")]
         public async Task<IActionResult> Add([FromBody] DonationDto donation)
         {
@@ -60,6 +73,20 @@ namespace Charity_API.Controllers
             {
                 await donationService.AddDonation(donation);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("add-donation-user")]
+        public async Task<IActionResult> AddDonationUser([FromBody] DonationBenefitiaryDto dto)
+        {
+            try
+            {
+                var cd = await donationService.CreateDonator_Benefitiary(dto);
+                return Ok(cd);
             }
             catch (Exception ex)
             {

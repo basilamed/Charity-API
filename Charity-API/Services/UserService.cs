@@ -3,6 +3,7 @@ using Charity_API.Data;
 using Charity_API.Data.DTOs;
 using Charity_API.Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -237,7 +238,11 @@ namespace Charity_API.Services
             return list;
         }
 
-
+        public async Task<List<User>> GetAllUsersWithCategories()
+        {
+            var list = await context.Users.Include(c => c.Categories).Where(c => c.RoleId == 4).ToListAsync();
+            return list;
+        }
         public async Task<bool> ChangePassword(string userId, ChangePasswordDto user)
         {
             var u = await userManager.FindByIdAsync(userId);

@@ -10,6 +10,7 @@
         public int CategoryId { get; set; }
         public User Donator { get; set; }
         public string DonatorId { get; set; }
+        public List<Donation_Benefitiary> Benefitiaries { get; set; }
 
     }
 }

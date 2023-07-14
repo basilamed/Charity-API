@@ -47,7 +47,7 @@ namespace Charity_API.Services
 
         public async Task<User_Category> CreateUser_Category(CategoryUserDto categoryUserDto)
         {
-            var user = await context.User.FirstOrDefaultAsync(c => c.Id == categoryUserDto.UserId);
+            var user = await context.User_Category.FirstOrDefaultAsync(c => c.Id == categoryUserDto.UserId);
             if (user == null)
             {
                 throw new Exception("User not found");
@@ -92,7 +92,7 @@ namespace Charity_API.Services
         }
         public async Task<List<Category>> GetCategoriesByUserId(string userId)
         {
-            var user = await context.User.FirstOrDefaultAsync(c => c.Id == userId);
+            var user = await context.User_Category.FirstOrDefaultAsync(c => c.Id == userId);
             if (user == null)
             {
                 throw new Exception("User not found");
@@ -107,7 +107,7 @@ namespace Charity_API.Services
         }
         public async Task<List<Category>> GetNCategoriesByUserId(string userId)
         {
-            var user = await context.User.FirstOrDefaultAsync(c => c.Id == userId);
+            var user = await context.User_Category.FirstOrDefaultAsync(c => c.Id == userId);
             if (user == null)
             {
                 throw new Exception("User not found");

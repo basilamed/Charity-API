@@ -140,6 +140,19 @@ namespace Charity_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("get-all-benefitiaries-with-categories")]
+        public async Task<IActionResult> GetBenefitiariesWithCategories()
+        {
+            try
+            {
+                var res = await userService.GetAllUsersWithCategories();
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPut("change-password/{id}")]
         public async Task<IActionResult> ChangePassword(string id, [FromBody] ChangePasswordDto user)
         {

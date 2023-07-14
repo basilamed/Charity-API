@@ -3,6 +3,7 @@ using Charity_API.Data;
 using Microsoft.AspNetCore.Identity;
 using Charity_API.Data.DTOs;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Charity_API.Services
 {
@@ -38,7 +39,7 @@ namespace Charity_API.Services
         }
         public async Task<List<Donation>> GetDonationsByDonatorId(string userId)
         {
-            var user = await context.User.FirstOrDefaultAsync(c => c.Id == userId);
+            var user = await context.User_Category.FirstOrDefaultAsync(c => c.Id == userId);
             if (user == null)
             {
                 throw new Exception("User not found");
@@ -66,6 +67,21 @@ namespace Charity_API.Services
 
             return donations;
         }
+        public async Task<List<Donation>> GetDonationsByCategoryId(int Id)
+        {
+            var c = await context.Category.FirstOrDefaultAsync(c => c.Id == Id);
+            if (c == null)
+            {
+                throw new Exception("Category not found");
+            }
+
+            var donations = await context.Donations
+                .Where(uc => uc.CategoryId == Id)
+                .Include(c => c.Category)
+                .ToListAsync();
+
+            return donations;
+        }
         //public async Task<List<Donation>> GetDonationsByBenefitiaryId(string userId)
         //{ 
         //    var user = await context.User.FirstOrDefaultAsync(c => c.Id == userId);
@@ -80,6 +96,49 @@ namespace Charity_API.Services
 
         //    return donations;
         //}
+
+        public async Task<Donation_Benefitiary> CreateDonator_Benefitiary(DonationBenefitiaryDto donationBenefitiaryDto)
+        {
+            var donation = await context.Donations.FirstOrDefaultAsync(c => c.DonationId == donationBenefitiaryDto.DonationId);
+            if (donation == null)
+            {
+                throw new Exception("Donation not found");
+            }
+            if (donation.LeftoverAmount == 0)
+            {
+                throw new Exception("Donation has been fully spent");
+            }
+            if (donation.LeftoverAmount < donationBenefitiaryDto.Amount)
+            {
+                throw new Exception("The amount you are trying to give cannot be given");
+            }
+
+            var user = await context.User_Category.FirstOrDefaultAsync(d => d.Id == donationBenefitiaryDto.BenefitiaryId);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            var existingUserCategory = await context.User_Categories
+                .FirstOrDefaultAsync(uc => uc.UserId == donationBenefitiaryDto.BenefitiaryId && uc.CategoryId == donation.CategoryId);
+            if (existingUserCategory == null)
+            {
+                throw new Exception("User_Category relationship doesnt exist");
+            }
+
+            var donation_User = new Donation_Benefitiary
+            {
+                DonationId = donationBenefitiaryDto.DonationId,
+                BenefitiaryId = donationBenefitiaryDto.BenefitiaryId,
+                Amount = donationBenefitiaryDto.Amount
+            };
+
+            donation.LeftoverAmount -= donation_User.Amount;
+
+            await context.Donation_Benefitiaries.AddAsync(donation_User);
+            await context.SaveChangesAsync();
+            return donation_User;
+        }
 
     }
 }
