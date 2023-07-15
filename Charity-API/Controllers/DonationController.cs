@@ -40,6 +40,20 @@ namespace Charity_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
+        [HttpGet("get-total-by-benefitiary-id/{id}/{categoryId}")]
+        public async Task<IActionResult> GetTotalByBenefitiaryId(string id, int categoryId)
+        {
+            try
+            {
+                var list = await donationService.GetTotalAmountReceivedByBeneficiary(id, categoryId);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("donation-by-id/{id}")]
         public async Task<IActionResult> GetDonation(int id)
         {

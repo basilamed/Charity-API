@@ -60,7 +60,19 @@ namespace Charity_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [HttpGet("get-user-donations-by-id/{id}")]
+        public async Task<IActionResult> GetUserDonationsById(string id)
+        {
+            try
+            {
+                var res = await userService.GetUserAndDonations(id);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpDelete("delete-user/{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {

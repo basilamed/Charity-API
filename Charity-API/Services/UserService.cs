@@ -4,10 +4,13 @@ using Charity_API.Data.DTOs;
 using Charity_API.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Numerics;
 using System.Security.Claims;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Charity_API.Services
 {
@@ -172,6 +175,19 @@ namespace Charity_API.Services
             }
             return u;
         }
+        public async Task<User> GetUserAndDonations(string userId)
+        {
+            var u = await userManager.Users
+                .Include(user => user.Donation)
+                .FirstOrDefaultAsync(user => user.Id == userId);
+
+            if (u == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            return u;
+        }
         public async Task<bool> DeleteUser(string userId)
         {
             var u = await userManager.FindByIdAsync(userId);
@@ -240,9 +256,24 @@ namespace Charity_API.Services
 
         public async Task<List<User>> GetAllUsersWithCategories()
         {
-            var list = await context.Users.Include(c => c.Categories).Where(c => c.RoleId == 4).ToListAsync();
+            var list = await context.Users
+                .Include(c => c.Categories)
+                .ThenInclude(cu => cu.Category)
+                .Where(c => c.RoleId == 4 && c.Categories != null && c.Categories.Any())
+                .Include(d => d.Donation)
+                .ToListAsync();
+
+            // Remove other properties of the Category except for Name
+            foreach (var user in list)
+            {
+                foreach (var userCategory in user.Categories)
+                {
+                    userCategory.Category = new Category { Name = userCategory.Category.Name };
+                }
+            }
             return list;
         }
+        
         public async Task<bool> ChangePassword(string userId, ChangePasswordDto user)
         {
             var u = await userManager.FindByIdAsync(userId);

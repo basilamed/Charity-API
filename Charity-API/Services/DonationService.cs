@@ -76,27 +76,20 @@ namespace Charity_API.Services
             }
 
             var donations = await context.Donations
-                .Where(uc => uc.CategoryId == Id)
+                .Where(uc => uc.CategoryId == Id && uc.LeftoverAmount > 0)
                 .Include(c => c.Category)
                 .ToListAsync();
 
             return donations;
         }
-        //public async Task<List<Donation>> GetDonationsByBenefitiaryId(string userId)
-        //{ 
-        //    var user = await context.User.FirstOrDefaultAsync(c => c.Id == userId);
-        //    if (user == null)
-        //    {
-        //        throw new Exception("User not found");
-        //    }
+        public async Task<double> GetTotalAmountReceivedByBeneficiary(string userId, int categoryId)
+        {
+            var totalAmount = await context.Donation_Benefitiaries
+                .Where(db => db.BenefitiaryId == userId && db.Donation.CategoryId == categoryId)
+                .SumAsync(db => db.Amount);
 
-        //    var donations = await context.Donations
-        //        .Where(uc => uc.Benefitiary.Contains(user))
-        //        .ToListAsync();
-
-        //    return donations;
-        //}
-
+            return totalAmount;
+        }
         public async Task<Donation_Benefitiary> CreateDonator_Benefitiary(DonationBenefitiaryDto donationBenefitiaryDto)
         {
             var donation = await context.Donations.FirstOrDefaultAsync(c => c.DonationId == donationBenefitiaryDto.DonationId);
@@ -128,6 +121,7 @@ namespace Charity_API.Services
 
             var donation_User = new Donation_Benefitiary
             {
+                Date = DateTime.UtcNow,
                 DonationId = donationBenefitiaryDto.DonationId,
                 BenefitiaryId = donationBenefitiaryDto.BenefitiaryId,
                 Amount = donationBenefitiaryDto.Amount
