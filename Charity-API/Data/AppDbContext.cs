@@ -14,7 +14,6 @@ namespace Charity_API.Data
             base.OnModelCreating(modelBuilder);
 
 
-
             modelBuilder.Entity<User_Category>()
                 .HasOne(c => c.Category)
                 .WithMany(u => u.Users)
@@ -35,6 +34,12 @@ namespace Charity_API.Data
                 .HasOne(u => u.Donator)
                 .WithMany(n => n.DonatorsNotes)
                 .HasForeignKey(ni => ni.DonatorId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<User_Donator_Note>()
+                .HasOne(u => u.Note)
+                .WithMany(n => n.Notes)
+                .HasForeignKey(ni => ni.NodeId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Donation_Benefitiary>()

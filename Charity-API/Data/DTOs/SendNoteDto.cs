@@ -3,13 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Charity_API.Data.DTOs
 {
-    public class DonationDto
+    public class SendNoteDto
     {
-        public DateTime DonationDate { get; set; }
         [Required]
-        public double DonationAmount { get; set; }
+        public int Donation_Benefitiary_Id { get; set; }
         [Required]
-        public int CategoryId { get; set; }
+        public int NoteId { get; set; }
+        [Required]
+        public string UserId { get; set; }
         [Required]
         public string DonatorId { get; set; }
     }

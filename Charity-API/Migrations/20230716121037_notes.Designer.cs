@@ -4,6 +4,7 @@ using Charity_API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Charity_API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230716121037_notes")]
+    partial class notes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,9 +112,6 @@ namespace Charity_API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Review")
                         .HasColumnType("int");
@@ -288,8 +288,8 @@ namespace Charity_API.Migrations
                     b.Property<int>("NodeId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Seen")
-                        .HasColumnType("bit");
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -299,7 +299,7 @@ namespace Charity_API.Migrations
 
                     b.HasIndex("DonatorId");
 
-                    b.HasIndex("NodeId");
+                    b.HasIndex("NoteId");
 
                     b.HasIndex("UserId");
 
@@ -523,9 +523,9 @@ namespace Charity_API.Migrations
                         .IsRequired();
 
                     b.HasOne("Charity_API.Data.Models.Note", "Note")
-                        .WithMany("Notes")
-                        .HasForeignKey("NodeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithMany()
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Charity_API.Data.Models.User", "Benefitiary")
@@ -600,11 +600,6 @@ namespace Charity_API.Migrations
             modelBuilder.Entity("Charity_API.Data.Models.Donation", b =>
                 {
                     b.Navigation("Benefitiaries");
-                });
-
-            modelBuilder.Entity("Charity_API.Data.Models.Note", b =>
-                {
-                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("Charity_API.Data.Models.Roles", b =>

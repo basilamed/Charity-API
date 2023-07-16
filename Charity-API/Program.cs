@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<DonationService>();
+builder.Services.AddScoped<NoteService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

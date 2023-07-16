@@ -179,6 +179,11 @@ namespace Charity_API.Services
         {
             var u = await userManager.Users
                 .Include(user => user.Donation)
+                .ThenInclude(d => d.Donation)
+                .ThenInclude(c => c.Category)
+                .Include(user => user.Donation)
+                .ThenInclude(d => d.Donation)
+                .ThenInclude(d => d.Donator)
                 .FirstOrDefaultAsync(user => user.Id == userId);
 
             if (u == null)
