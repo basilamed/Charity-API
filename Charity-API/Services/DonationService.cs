@@ -90,6 +90,22 @@ namespace Charity_API.Services
 
             return totalAmount;
         }
+        public async Task<double> GetTotalAmountByCatgeory(int categoryId)
+        {
+            var totalAmount = await context.Donations
+                .Where(db => db.CategoryId == categoryId)
+                .SumAsync(db => db.DonationAmount);
+
+            return totalAmount;
+        }
+        public async Task<double> GetLeftoverAmountByCatgeory(int categoryId)
+        {
+            var totalAmount = await context.Donations
+                .Where(db => db.CategoryId == categoryId)
+                .SumAsync(db => db.LeftoverAmount);
+
+            return totalAmount;
+        }
         public async Task<Donation_Benefitiary> CreateDonator_Benefitiary(DonationBenefitiaryDto donationBenefitiaryDto)
         {
             var donation = await context.Donations.FirstOrDefaultAsync(c => c.DonationId == donationBenefitiaryDto.DonationId);

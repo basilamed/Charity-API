@@ -54,6 +54,32 @@ namespace Charity_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("get-total-by-category-id/{categoryId}")]
+        public async Task<IActionResult> GetTotalByCategoryId( int categoryId)
+        {
+            try
+            {
+                var list = await donationService.GetTotalAmountByCatgeory(categoryId);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("get-leftover-by-category-id/{categoryId}")]
+        public async Task<IActionResult> GetLeftoverByCategoryId(int categoryId)
+        {
+            try
+            {
+                var list = await donationService.GetLeftoverAmountByCatgeory(categoryId);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("donation-by-id/{id}")]
         public async Task<IActionResult> GetDonation(int id)
         {

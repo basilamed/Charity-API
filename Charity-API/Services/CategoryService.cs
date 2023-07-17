@@ -27,7 +27,12 @@ namespace Charity_API.Services
             var list = await context.Category.Include(c => c.Users).ToListAsync();
             return list;
         }
-
+        public async Task<int> GetAllCategoriesWithCountUsers(int id)
+        {
+            var list = await context.Category.Where(c => c.Id == id).Include(c => c.Users).ToListAsync();
+            var userCount = list.SelectMany(c => c.Users).Count();
+            return (userCount);
+        }
         public async Task AddCategory(CategoryDto category)
         {
             var cE = await context.Category.FirstOrDefaultAsync(c => c.Name == category.Name);

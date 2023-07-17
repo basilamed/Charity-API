@@ -200,15 +200,14 @@ namespace Charity_API.Services
             {
                 throw new Exception("User not found");
             }
+
             var result = await userManager.DeleteAsync(u);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return true;
+                throw new Exception("Failed to delete user");
             }
-            else
-            {
-                throw new Exception("Something went wrong");
-            }
+
+            return true;
         }
         public async Task<User> UpdateUser(string userId, UpdateUserDto user)
         {
@@ -250,7 +249,7 @@ namespace Charity_API.Services
         }
         public async Task<List<User>> GetApproved()
         {
-            var list = context.Users.Where(x => x.Approved == true).ToList();
+            var list = context.Users.Where(x => x.Approved == true && x.RoleId != 1).ToList();
             return list;
         }
         public async Task<List<User>> GetPending()

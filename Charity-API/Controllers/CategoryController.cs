@@ -41,6 +41,19 @@ namespace Charity_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("get-user-count-by-category-id/{id}")]
+        public async Task<IActionResult> GetAllWithUsersCount(int id)
+        {
+            try
+            {
+                var list = await categoryService.GetAllCategoriesWithCountUsers(id);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("get-category-by-user-id/{id}")]
         public async Task<IActionResult> GetByUserId(string id)
         {
