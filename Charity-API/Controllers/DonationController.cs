@@ -28,11 +28,11 @@ namespace Charity_API.Controllers
             }
         }
         [HttpGet("all-donations-by-donator-id/{id}")]
-        public async Task<IActionResult> GetAllDonations(string id)
+        public async Task<IActionResult> GetAllDonations([FromQuery] DonationQuery dto, string id)
         {
             try
             {
-                var list = await donationService.GetDonationsByDonatorId(id);
+                var list = await donationService.GetDonationsByDonatorId(dto, id);
                 return Ok(list);
             }
             catch (Exception ex)

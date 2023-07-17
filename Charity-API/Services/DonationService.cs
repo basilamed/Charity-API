@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Charity_API.Data.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Azure.Core;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Linq.Expressions;
+using Charity_API.SortingAndPaging;
 
 namespace Charity_API.Services
 {
@@ -37,7 +42,7 @@ namespace Charity_API.Services
             var list = await context.Donations.ToListAsync();
             return list;
         }
-        public async Task<List<Donation>> GetDonationsByDonatorId(string userId)
+        public async Task<QueryResultsDto<Donation>> GetDonationsByDonatorId([FromQuery] DonationQuery request, string userId)
         {
             var user = await context.User_Category.FirstOrDefaultAsync(c => c.Id == userId);
             if (user == null)
@@ -45,12 +50,45 @@ namespace Charity_API.Services
                 throw new Exception("User not found");
             }
 
-            var donations = await context.Donations
+            var query =  context.Donations
                 .Where(uc => uc.DonatorId == userId)
                 .Include(c => c.Category)
-                .ToListAsync();
+                .AsQueryable();
 
-            return donations;
+            if (request.DateOfDonation.HasValue)
+            {
+                DateTime dateOfDonation = request.DateOfDonation.Value.Date;
+
+                query = query.Where(a => a.DonationDate.Date == dateOfDonation);
+            }
+
+            if (request.LeftoverAmount.HasValue)
+            {
+                query = query.Where(a => a.LeftoverAmount <= request.LeftoverAmount.Value);
+            }
+            var sortColumns = new Dictionary<string, Expression<Func<Donation, object>>>()
+            {
+                ["DonationAmount"] = c => c.DonationAmount
+            };
+            Expression<Func<Donation, object>> selectedColumn = null;
+            if (!string.IsNullOrEmpty(request.SortBy) && sortColumns.ContainsKey(request.SortBy))
+            {
+                selectedColumn = sortColumns[request.SortBy];
+            }
+            var totalCount = await query.CountAsync();
+
+            query = query.ApplySorting(request, sortColumns);
+            query = query.ApplyPaging(request);
+             
+            var list =  query.ToList();
+
+            QueryResultsDto<Donation> result = new QueryResultsDto<Donation>
+            {
+                TotalItems = totalCount,
+                Items = list
+            };
+
+            return result;
         }
 
         public async Task<Donation> GetDonationsById(int id)
